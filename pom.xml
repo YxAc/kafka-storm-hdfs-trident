@@ -1,0 +1,113 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>codelab.yxac.demo</groupId>
+  <artifactId>kafka-storm-hdfs-trident</artifactId>
+  <version>0.0.2-SNAPSHOT</version>
+  <description>A demo for kafka-storm-hdfs-trident</description>
+  <name>Kafka-Storm Project</name>
+  <packaging>jar</packaging>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <!-- the storm core jar supporting access the security hdfs -->
+    <dependency>
+      <groupId>org.apache.storm</groupId>
+      <artifactId>storm-core</artifactId>
+      <version>0.9.1-incubating-mdh1.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <!-- the storm-kafka jar supporting storm reading data from kafka -->
+    <dependency>
+      <groupId>net.wurstmeister.storm</groupId>
+      <artifactId>storm-kafka-0.8-plus</artifactId>
+      <version>0.4.0-mdh1.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- the dependencies for access hdfs cluster in this topology -->
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-hdfs</artifactId>
+      <version>2.0.0-mdh1.0.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-common</artifactId>
+      <version>2.0.0-mdh1.0.0-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <!-- tar the core-site and hdfs-site for access hdfs cluster -->
+    <!-- please place the config files in the directory of 'conf' -->
+    <resources>
+      <resource>
+        <directory>${basedir}/conf</directory>
+        <includes>
+          <include>core-site.xml</include>
+          <include>hdfs-site.xml</include>
+        </includes>
+      </resource>
+    </resources>
+
+    <!-- tar a 'with dependencies' jar -->
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>attached</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <mainClass></mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
